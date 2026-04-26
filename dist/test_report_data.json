@@ -1,0 +1,211 @@
+{
+  "title": "劳动争议案件分析报告",
+  "generated_at": "2025-01-20 14:30",
+  "dispute_type": "劳动争议",
+  "case_count": 62,
+  "top3_similarity": [0.94, 0.91, 0.89],
+  "sections": [
+    {
+      "type": "text",
+      "title": "一、案情概要",
+      "content": "<p>用户在公司工作3年后被无故辞退，公司未支付经济补偿金。根据《劳动合同法》第46条、47条规定，用人单位违法解除劳动合同应当支付经济补偿金。</p><p><strong>关键要素：</strong></p><ul><li>工作年限：3年</li><li>辞退原因：无故辞退（违法解除）</li><li>补偿诉求：经济赔偿金（2N）</li></ul>"
+    },
+    {
+      "type": "pie",
+      "title": "二、判决结果分布",
+      "description": "基于62个劳动争议类案统计分析",
+      "chart_option": {
+        "tooltip": {
+          "trigger": "item",
+          "formatter": "{b}: {c} ({d}%)"
+        },
+        "legend": {
+          "bottom": "0%",
+          "left": "center"
+        },
+        "series": [
+          {
+            "type": "pie",
+            "radius": ["40%", "70%"],
+            "avoidLabelOverlap": false,
+            "itemStyle": {
+              "borderRadius": 10,
+              "borderColor": "#fff",
+              "borderWidth": 2
+            },
+            "label": {
+              "show": true,
+              "formatter": "{b}: {d}%"
+            },
+            "data": [
+              {"value": 45, "name": "支持经济补偿", "itemStyle": {"color": "#67C23A"}},
+              {"value": 12, "name": "部分支持", "itemStyle": {"color": "#E6A23C"}},
+              {"value": 5, "name": "驳回请求", "itemStyle": {"color": "#F56C6C"}}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "table",
+      "title": "三、Top 3 类案分析",
+      "columns": [
+        {"key": "case_no", "label": "案号"},
+        {"key": "court", "label": "法院"},
+        {"key": "result", "label": "判决结果"},
+        {"key": "compensation", "label": "赔偿金额"},
+        {"key": "similarity", "label": "相似度"}
+      ],
+      "rows": [
+        {"case_no": "(2024)沪01民终1234号", "court": "上海市第一中级人民法院", "result": "支持", "compensation": "¥45,000", "similarity": "94%"},
+        {"case_no": "(2024)粤03民终5678号", "court": "深圳市中级人民法院", "result": "支持", "compensation": "¥38,000", "similarity": "91%"},
+        {"case_no": "(2024)京02民终9012号", "court": "北京市第二中级人民法院", "result": "部分支持", "compensation": "¥20,000", "similarity": "89%"}
+      ]
+    },
+    {
+      "type": "bar",
+      "title": "四、法院判决倾向对比",
+      "description": "不同地区法院支持率对比",
+      "chart_option": {
+        "tooltip": {
+          "trigger": "axis",
+          "axisPointer": {"type": "shadow"}
+        },
+        "legend": {
+          "data": ["支持率", "部分支持率", "驳回率"]
+        },
+        "grid": {
+          "left": "3%",
+          "right": "4%",
+          "bottom": "3%",
+          "containLabel": true
+        },
+        "xAxis": {
+          "type": "category",
+          "data": ["北京", "上海", "广东", "浙江", "江苏"]
+        },
+        "yAxis": {
+          "type": "value",
+          "max": 100,
+          "axisLabel": {"formatter": "{value}%"}
+        },
+        "series": [
+          {
+            "name": "支持率",
+            "type": "bar",
+            "data": [72, 78, 65, 70, 68],
+            "itemStyle": {"color": "#67C23A"}
+          },
+          {
+            "name": "部分支持率",
+            "type": "bar",
+            "data": [18, 15, 25, 20, 22],
+            "itemStyle": {"color": "#E6A23C"}
+          },
+          {
+            "name": "驳回率",
+            "type": "bar",
+            "data": [10, 7, 10, 10, 10],
+            "itemStyle": {"color": "#F56C6C"}
+          }
+        ]
+      }
+    },
+    {
+      "type": "line",
+      "title": "五、赔偿金额趋势",
+      "description": "近三年劳动争议赔偿金额走势",
+      "chart_option": {
+        "tooltip": {
+          "trigger": "axis"
+        },
+        "legend": {
+          "data": ["平均赔偿", "中位数赔偿"]
+        },
+        "grid": {
+          "left": "3%",
+          "right": "4%",
+          "bottom": "3%",
+          "containLabel": true
+        },
+        "xAxis": {
+          "type": "category",
+          "data": ["2022Q1", "2022Q2", "2022Q3", "2022Q4", "2023Q1", "2023Q2", "2023Q3", "2023Q4", "2024Q1", "2024Q2"]
+        },
+        "yAxis": {
+          "type": "value",
+          "axisLabel": {"formatter": "¥{value}K"}
+        },
+        "series": [
+          {
+            "name": "平均赔偿",
+            "type": "line",
+            "smooth": true,
+            "data": [25, 28, 30, 32, 35, 38, 40, 42, 45, 48],
+            "itemStyle": {"color": "#409EFF"},
+            "areaStyle": {"color": {"type": "linear", "x": 0, "y": 0, "x2": 0, "y2": 1, "colorStops": [{"offset": 0, "color": "rgba(64, 158, 255, 0.3)"}, {"offset": 1, "color": "rgba(64, 158, 255, 0.05)"}]}}
+          },
+          {
+            "name": "中位数赔偿",
+            "type": "line",
+            "smooth": true,
+            "data": [18, 20, 22, 25, 28, 30, 32, 35, 38, 40],
+            "itemStyle": {"color": "#67C23A"}
+          }
+        ]
+      }
+    },
+    {
+      "type": "radar",
+      "title": "六、案件特征雷达图",
+      "description": "本案与类案特征对比",
+      "chart_option": {
+        "tooltip": {},
+        "legend": {
+          "data": ["本案", "类案均值"]
+        },
+        "radar": {
+          "indicator": [
+            {"name": "工作年限", "max": 10},
+            {"name": "证据完整度", "max": 100},
+            {"name": "法律依据充分性", "max": 100},
+            {"name": "诉求合理性", "max": 100},
+            {"name": "胜诉概率预估", "max": 100}
+          ],
+          "radius": "65%"
+        },
+        "series": [
+          {
+            "type": "radar",
+            "data": [
+              {
+                "value": [3, 85, 90, 88, 82],
+                "name": "本案",
+                "areaStyle": {"color": "rgba(64, 158, 255, 0.3)"},
+                "lineStyle": {"color": "#409EFF"},
+                "itemStyle": {"color": "#409EFF"}
+              },
+              {
+                "value": [2.5, 75, 80, 78, 75],
+                "name": "类案均值",
+                "areaStyle": {"color": "rgba(103, 194, 58, 0.3)"},
+                "lineStyle": {"color": "#67C23A"},
+                "itemStyle": {"color": "#67C23A"}
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "text",
+      "title": "七、法律依据汇总",
+      "content": "<p><strong>主要法律依据：</strong></p><ol><li><strong>《劳动合同法》第46条</strong> - 经济补偿规定</li><li><strong>《劳动合同法》第47条</strong> - 经济补偿标准（每满一年支付一个月工资）</li><li><strong>《劳动合同法》第87条</strong> - 违法解除的赔偿规定（2N）</li><li><strong>《劳动争议调解仲裁法》</strong> - 劳动争议处理程序</li></ol><p><strong>建议：</strong>收集劳动合同、工资流水、社保缴纳记录、辞退通知书等证据，向劳动仲裁委员会申请仲裁。</p>"
+    },
+    {
+      "type": "text",
+      "title": "八、风险提示",
+      "content": "<div style='background:#FFF4E6;border-left:4px solid #E6A23C;padding:15px;margin:10px 0;border-radius:4px;'><strong>⚠️ 注意事项：</strong><ul><li>注意劳动仲裁时效（1年）</li><li>保留所有与公司沟通的证据</li><li>如公司已注销，可将股东列为被申请人</li><li>可主张未支付加班费、未休年假补偿等</li></ul></div>"
+    }
+  ]
+}

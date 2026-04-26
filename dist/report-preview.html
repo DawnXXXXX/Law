@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>案例分析报告</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-plus@2.5.6/dist/index.css">
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.5.6/dist/index.full.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .report-wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .report-viewer {
+      padding: 24px;
+      background: #fff;
+      min-height: 100%;
+      width: 210mm;
+      box-sizing: border-box;
+      margin: 0 auto;
+    }
+    .report-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #e4e7ed;
+      margin-bottom: 24px;
+    }
+    .report-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 20px;
+      font-weight: 600;
+      color: #303133;
+    }
+    .report-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .el-tag {
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+    .el-tag--info {
+      background: #f4f4f5;
+      border-color: #d3d4d6;
+      color: #909399;
+    }
+    .el-tag--success {
+      background: #f0f9eb;
+      border-color: #c2e7b0;
+      color: #67c23a;
+    }
+    .btn-export {
+      padding: 8px 16px;
+      background: #409eff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .btn-export:hover {
+      background: #66b1ff;
+    }
+    .report-section {
+      margin-bottom: 32px;
+      padding: 20px;
+      background: #fafafa;
+      border-radius: 8px;
+    }
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #303133;
+      margin-bottom: 12px;
+      padding-left: 12px;
+      border-left: 4px solid #409eff;
+    }
+    .section-description {
+      font-size: 13px;
+      color: #909399;
+      margin-bottom: 16px;
+      padding-left: 12px;
+    }
+    .section-content {
+      line-height: 1.8;
+      color: #606266;
+    }
+    .section-content h3, .section-content h4 {
+      color: #303133;
+      margin: 16px 0 8px 0;
+      font-weight: 600;
+    }
+    .section-content p {
+      margin: 8px 0;
+    }
+    .section-content ul, .section-content ol {
+      margin: 8px 0;
+      padding-left: 24px;
+    }
+    .section-content li {
+      margin: 4px 0;
+    }
+    .section-content b, .section-content strong {
+      color: #303133;
+      font-weight: 600;
+    }
+    .section-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+    }
+    .section-content table td, .section-content table th {
+      border: 1px solid #dcdfe6;
+      padding: 8px 12px;
+    }
+    .section-table {
+      margin-top: 8px;
+      overflow-x: auto;
+    }
+    .section-table table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .section-table th {
+      background: #f5f7fa;
+      color: #606266;
+      font-weight: 600;
+      text-align: left;
+      padding: 12px 8px;
+      border: 1px solid #ebeef5;
+    }
+    .section-table td {
+      padding: 10px 8px;
+      border: 1px solid #ebeef5;
+      color: #606266;
+    }
+    .section-table tr:nth-child(even) {
+      background: #fafafa;
+    }
+    .section-chart {
+      width: 100%;
+      height: 350px;
+      background: #fff;
+      border-radius: 4px;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+    .report-footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #e4e7ed;
+      text-align: center;
+      color: #909399;
+      font-size: 13px;
+    }
+    .report-footer p {
+      margin: 4px 0;
+    }
+    .disclaimer {
+      font-size: 12px;
+      color: #c0c4cc;
+      margin-top: 8px !important;
+    }
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.95);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      gap: 16px;
+    }
+    .loading-icon {
+      font-size: 48px;
+      color: #409eff;
+      animation: rotate 1s linear infinite;
+    }
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .loading-overlay span {
+      font-size: 16px;
+      color: #606266;
+    }
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+      }
+      .btn-export {
+        display: none;
+      }
+      .report-section {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      .section-chart {
+        height: 350px;
+        page-break-inside: avoid;
+      }
+      .section-table {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="loading-overlay" v-if="loading">
+      <div class="loading-icon">⟳</div>
+      <span>正在生成 PDF，请稍候...</span>
+    </div>
+
+    <div class="report-wrapper">
+      <div class="report-viewer">
+        <!-- 报告头部 -->
+        <div class="report-header">
+          <div class="report-title">
+            <span>📊</span>
+            <span>{{ reportData.title || '法律案件分析报告' }}</span>
+          </div>
+          <div class="report-actions">
+            <span class="el-tag el-tag--info">{{ reportData.dispute_type || '' }}</span>
+            <span class="el-tag el-tag--success">类案: {{ reportData.case_count || 0 }}个</span>
+            <button class="btn-export" @click="exportPDF" v-if="!loading">导出 PDF</button>
+          </div>
+        </div>
+
+        <!-- 动态章节列表 -->
+        <div class="report-sections">
+          <div v-for="(section, index) in reportData.sections || []" :key="index" class="report-section">
+            <!-- 文本章节 -->
+            <template v-if="section.type === 'text' && section.content">
+              <h3 v-if="section.title" class="section-title">{{ section.title }}</h3>
+              <div class="section-content" v-html="section.content"></div>
+            </template>
+
+            <!-- 表格章节 -->
+            <template v-else-if="section.type === 'table' && section.columns && section.rows">
+              <h3 v-if="section.title" class="section-title">{{ section.title }}</h3>
+              <div class="section-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th v-for="col in section.columns" :key="col.key">{{ col.label }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(row, rowIndex) in section.rows" :key="rowIndex">
+                      <td v-for="col in section.columns" :key="col.key">{{ row[col.key] }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </template>
+
+            <!-- 图表章节 -->
+            <template v-else-if="isChartSection(section)">
+              <h3 v-if="section.title" class="section-title">{{ section.title }}</h3>
+              <p v-if="section.description" class="section-description">{{ section.description }}</p>
+              <div :ref="el => setChartRef(index, el)" class="section-chart"></div>
+            </template>
+          </div>
+        </div>
+
+        <!-- 报告底部 -->
+        <div class="report-footer">
+          <p>生成时间: {{ reportData.generated_at || '' }}</p>
+          <p class="disclaimer">本报告由 AI 自动生成，内容仅供参考，不构成法律建议。具体法律问题请咨询专业律师。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const { createApp, ref, onMounted, nextTick } = Vue
+    const ECharts = echarts
+
+    const chartTypes = [
+      'pie', 'bar', 'line', 'radar', 'scatter',
+      'funnel', 'gauge', 'heatmap', 'treemap',
+      'candlestick', 'boxplot', 'pictorial', 'sunburst',
+      'parallel', 'sankey', 'themeRiver', 'graph'
+    ]
+
+    const app = createApp({
+      setup() {
+        const reportData = ref({})
+        const loading = ref(false)
+        const chartRefs = ref(new Map())
+        const chartInstances = ref(new Map())
+        const reportContainer = ref(null)
+
+        function isChartSection(section) {
+          return chartTypes.includes(section.type) && section.chart_option
+        }
+
+        function setChartRef(index, el) {
+          if (el) {
+            chartRefs.value.set(index, el)
+          }
+        }
+
+        function initChart(section, el, index) {
+          if (!el || !section.chart_option) return
+
+          if (chartInstances.value.has(index)) {
+            chartInstances.value.get(index)?.dispose()
+          }
+
+          const chart = ECharts.init(el)
+          chart.setOption(section.chart_option, true)
+          chartInstances.value.set(index, chart)
+        }
+
+        function initAllCharts() {
+          nextTick(() => {
+            const sections = reportData.value.sections || []
+            sections.forEach((section, index) => {
+              if (isChartSection(section)) {
+                const el = chartRefs.value.get(index)
+                if (el) {
+                  initChart(section, el, index)
+                }
+              }
+            })
+          })
+        }
+
+        async function exportPDF() {
+          const element = document.querySelector('.report-viewer')
+          if (!element) return
+
+          loading.value = true
+          try {
+            await nextTick()
+            await new Promise(resolve => setTimeout(resolve, 100))
+
+            await html2pdf().set({
+              margin: [10, 8, 10, 8],
+              filename: `案件分析报告_${Date.now()}.pdf`,
+              image: { type: 'png', quality: 0.98 },
+              html2canvas: {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                onclone: (clonedDoc) => {
+                  const clonedContainer = clonedDoc.querySelector('.report-viewer')
+                  if (clonedContainer) {
+                    clonedContainer.style.width = '210mm'
+                  }
+
+                  chartInstances.value.forEach((chart, index) => {
+                    const clonedEls = clonedDoc.querySelectorAll('.section-chart')
+                    const clonedEl = clonedEls[index]
+                    if (clonedEl && clonedEl.parentElement) {
+                      const width = clonedEl.offsetWidth || 600
+                      const height = clonedEl.offsetHeight || 350
+                      const clonedChart = ECharts.init(clonedEl)
+                      clonedChart.setOption(chart.getOption())
+                      clonedChart.resize({ width, height })
+                    }
+                  })
+                }
+              },
+              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+              pagebreak: { mode: ['avoid-all', 'css'] }
+            }).from(element).save()
+
+            console.log('PDF 导出成功')
+          } catch (error) {
+            console.error('PDF 导出失败:', error)
+            alert('PDF 导出失败')
+          } finally {
+            loading.value = false
+          }
+        }
+
+        // 加载示例报告数据
+        onMounted(() => {
+          // 模拟数据
+          reportData.value = {
+            title: '法律案件分析报告',
+            dispute_type: '劳动争议',
+            case_count: 62,
+            generated_at: new Date().toLocaleString('zh-CN'),
+            top3_similarity: [0.856, 0.823, 0.798],
+            sections: [
+              {
+                type: 'text',
+                title: '案情概述',
+                content: '<p>根据提供的案情信息，案件涉及<span style="color:#409eff"><b>劳动关系纠纷</b></span>，主要包括以下几个方面：</p><h4>1. 基本事实</h4><p>当事人在公司工作了<span style="color:#e6a23c"><b>3年</b></span>，最近被<span style="color:#f56c6c"><b>无故辞退</b></span>，公司没有支付经济补偿金。</p><h4>2. 争议焦点</h4><ul><li>公司单方解除劳动合同的合法性</li><li>经济补偿金的计算和支付</li><li>是否存在违法解除的情形</li></ul><h4>3. 法律适用</h4><p>根据《劳动合同法》相关规定，用人单位违法解除劳动合同的，应当支付赔偿金。</p>'
+              },
+              {
+                type: 'table',
+                title: '类案相似度分析',
+                columns: [
+                  { key: 'case_name', label: '案件名称' },
+                  { key: 'similarity', label: '相似度' },
+                  { key: 'result', label: '判决结果' },
+                  { key: 'compensation', label: '赔偿金额' }
+                ],
+                rows: [
+                  { case_name: '深圳某科技公司劳动纠纷案', similarity: '85.6%', result: '员工胜诉', compensation: '45,000元' },
+                  { case_name: '上海某制造企业解除合同案', similarity: '82.3%', result: '员工胜诉', compensation: '38,000元' },
+                  { case_name: '北京某服务公司经济补偿案', similarity: '79.8%', result: '部分支持', compensation: '25,000元' },
+                  { case_name: '广州某电子公司违法解除案', similarity: '77.2%', result: '员工胜诉', compensation: '52,000元' },
+                  { case_name: '杭州某电商企业裁员纠纷案', similarity: '75.1%', result: '调解结案', compensation: '30,000元' }
+                ]
+              },
+              {
+                type: 'bar',
+                title: '赔偿金额分布',
+                description: '基于类案统计数据',
+                chart_option: {
+                  tooltip: { trigger: 'axis' },
+                  xAxis: {
+                    type: 'category',
+                    data: ['0-2万', '2-4万', '4-6万', '6-8万', '8万以上']
+                  },
+                  yAxis: { type: 'value', name: '案件数量' },
+                  series: [{
+                    name: '案件数量',
+                    type: 'bar',
+                    data: [12, 18, 15, 10, 7],
+                    itemStyle: { color: '#409eff' },
+                    label: { show: true, position: 'top' }
+                  }]
+                }
+              },
+              {
+                type: 'text',
+                title: '法律建议',
+                content: '<p>基于类案分析和相关法律规定，提出以下建议：</p><h4>一、证据收集</h4><ul><li>收集劳动合同、工资条、社保缴费记录</li><li>保存公司发出的解除通知或相关邮件</li><li>记录与公司沟通的全过程（录音、聊天记录）</li></ul><h4>二、维权途径</h4><ul><li><b>第一步</b>：向当地劳动仲裁委员会申请仲裁</li><li><b>第二步</b>：如对仲裁结果不满意，可在15日内向法院起诉</li><li><b>第三步</b>：必要时可申请财产保全</li></ul><h4>三、赔偿计算</h4><p>根据《劳动合同法》第87条，用人单位违法解除劳动合同的，应当按照经济补偿标准的<b>二倍</b>向劳动者支付赔偿金。</p><p>经济补偿按劳动者在本单位工作的年限计算：</p><ul><li>每满1年支付1个月工资</li><li>6个月以上不满1年的，按1年计算</li><li>不满6个月的，支付半个月工资</li></ul>'
+              },
+              {
+                type: 'pie',
+                title: '类案判决结果分布',
+                description: '基于62个相似案例的统计',
+                chart_option: {
+                  tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+                  legend: { orient: 'vertical', left: 'left' },
+                  series: [{
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    avoidLabelOverlap: false,
+                    itemStyle: { borderRadius: 10, borderColor: '#fff', borderWidth: 2 },
+                    label: { show: true, formatter: '{b}: {d}%' },
+                    data: [
+                      { value: 35, name: '员工胜诉', itemStyle: { color: '#67c23a' } },
+                      { value: 15, name: '部分支持', itemStyle: { color: '#e6a23c' } },
+                      { value: 8, name: '公司胜诉', itemStyle: { color: '#f56c6c' } },
+                      { value: 4, name: '调解结案', itemStyle: { color: '#909399' } }
+                    ]
+                  }]
+                }
+              },
+              {
+                type: 'text',
+                title: '风险提示',
+                content: '<p style="color:#f56c6c"><b>重要提示：</b></p><ul><li>劳动仲裁时效为<b>1年</b>，从知道或应当知道权利被侵害之日起计算</li><li>请在时效期内及时申请仲裁，避免错过维权时机</li><li>建议委托专业律师代理，以提高维权成功率</li></ul>'
+              }
+            ]
+          }
+
+          // 初始化图表
+          initAllCharts()
+        })
+
+        return {
+          reportData,
+          loading,
+          isChartSection,
+          setChartRef,
+          exportPDF
+        }
+      }
+    })
+
+    app.mount('#app')
+  </script>
+</body>
+</html>
